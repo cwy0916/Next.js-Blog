@@ -73,6 +73,36 @@ export async function getBlogList(): Promise<Blog[]> {
     }
 }
 
+// 搜索博客文章（仅搜索文章名）
+export async function searchBlogs(query: string): Promise<Blog[]> {
+    try {
+        const allBlogs = await getBlogList();
+        
+        // 如果查询为空，返回空数组
+        if (!query || query.trim() === '') {
+            return [];
+        }
+        
+        const lowerCaseQuery = query.toLowerCase();
+        
+        // 只搜索标题匹配的文章
+        const titleMatches: Blog[] = [];
+        
+        // 遍历所有文章进行搜索
+        for (const blog of allBlogs) {
+            // 检查标题是否匹配（不区分大小写）
+            if (blog.name.toLowerCase().includes(lowerCaseQuery)) {
+                titleMatches.push(blog);
+            }
+        }
+        
+        return titleMatches;
+    } catch (error) {
+        console.error("搜索文章失败:", error);
+        return [];
+    }
+}
+
 export async function getBlog(name: string): Promise<Blog | null> {
     try {
         const mds = await fs.readdir(path.join(process.cwd(), "/content/mds"));

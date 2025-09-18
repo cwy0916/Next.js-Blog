@@ -4,8 +4,20 @@ import { NavigationMenu, NavigationMenuList, NavigationMenuItem, NavigationMenuL
 import Link from "next/link";
 import { ThemeModeToggle } from "./theme-mode-toggle";
 import { whiteList } from "@/app/white-list";
+import { SearchDialog } from "./search";
+import { searchBlogs } from "@/actions/blog/action";
 
 export function Header() {
+    // 处理搜索逻辑
+    const handleSearch = async (query: string) => {
+        try {
+            return await searchBlogs(query);
+        } catch (error) {
+            console.error("搜索失败:", error);
+            return [];
+        }
+    };
+
     return (
         <div className="p-4 max-w-screen-lg md:w-4/6 w-full sm:w-6/7 mx-auto flex justify-between">
             <NavigationMenu>
@@ -21,7 +33,10 @@ export function Header() {
                     )}
                 </NavigationMenuList>
             </NavigationMenu>
-            <ThemeModeToggle className="ml-auto" />
+            <div className="flex items-center gap-2">
+                <SearchDialog onSearch={handleSearch} />
+                <ThemeModeToggle />
+            </div>
         </div>
     );
 }
