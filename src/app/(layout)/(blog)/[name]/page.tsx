@@ -115,8 +115,8 @@ export default async function Page({ params }: { params: Params }) {
 			
 			<MDComponents transparent={true} content={blog.content} />
 		
-		{/* 相关文章推荐模块 */}
-		{randomBlogs.length > 0 && (
+		{/* 相关文章推荐模块 - 不在 about、friend-links 和 todo 页面显示 */}
+		{randomBlogs.length > 0 && decodedName !== 'about' && decodedName !== 'friend-links' && decodedName !== 'todo' && (
 			<div className="mt-12 pt-8 border-t border-border">
 				<h2 className="text-xl font-bold mb-6">相关文章推荐</h2>
 				<div className="grid gap-6 md:grid-cols-1 lg:grid-cols-2">
@@ -138,7 +138,7 @@ export default async function Page({ params }: { params: Params }) {
 									<p className="text-xs text-muted-foreground mt-3 font-mono">
 										{relatedBlog.date}
 									</p>
-									
+										
 									{/* 分类和标签区域 */}
 									<div className="mt-3 space-y-2">
 										{relatedBlog.categories && relatedBlog.categories.length > 0 && (
