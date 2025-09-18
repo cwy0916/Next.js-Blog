@@ -22,16 +22,16 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-    title: "Zwanan's Blog",
-    description: "Zwanan's Blog, 基于 Next.js 和 Tailwind CSS 构建的个人博客, 记录自己的笔记和生活. ",
-    keywords: ["Blog", "个人博客", "Note", "日记", "软件开发", "程序员", "Development", "Next.js", "Tailwind CSS", "Zwanan's Blog"],
+    title: "初无月的Blog",
+    description: "初无月的Blog, 基于 Next.js 和 Tailwind CSS 构建的个人博客, 记录自己的笔记和生活. ",
+    keywords: ["Blog", "个人博客", "Note", "日记", "软件开发", "程序员", "Development", "Next.js", "Tailwind CSS", "初无月的Blog"],
     authors: [
-        { name: "Zwanan", url: "https://blog.zwanan.top/about" },
-        { name: "Zwanan-github", url: "https://github.com/zwanan-github" }
+        { name: "Zwanan", url: "https://cyyvps.top/about" },
+        { name: "Zwanan-github", url: "https://github.com/cwy0916" }
     ],
     openGraph: {
-        title: "Zwanan's Blog",
-        description: "Zwanan's Blog, 基于 Next.js 和 Tailwind CSS 构建的个人博客, 记录自己的笔记和生活.",
+        title: "初无月的Blog",
+        description: "初无月的Blog, 基于 Next.js 和 Tailwind CSS 构建的个人博客, 记录自己的笔记和生活.",
         images: ["https://blog.zwanan.top/favicon.ico"],
     }
 }

@@ -2,9 +2,9 @@ import type { MetadataRoute } from "next";
 
 export default function manifest(): MetadataRoute.Manifest {
     return {
-        name: "Zwanan's Blog",
-        short_name: "Zwanan's Blog",
-        description: "Zwanan's Blog, 基于 Next.js 和 Tailwind CSS 构建的个人博客, 记录自己的笔记和生活.",
+        name: "初无月的Blog",
+        short_name: "初无月的Blog",
+        description: "初无月的Blog, 基于 Next.js 和 Tailwind CSS 构建的个人博客, 记录自己的笔记和生活.",
         start_url: '/',
         display: 'standalone',
         background_color: '#ffffff',

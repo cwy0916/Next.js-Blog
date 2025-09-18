@@ -22,8 +22,8 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
 		description: `${blog.name} ${blog.content}`,
 		keywords: [blog.name],
 		authors: [
-			{ name: "Zwanan", url: "https://blog.zwanan.top/about" },
-			{ name: "Zwanan-github", url: "https://github.com/zwanan-github" }
+			{ name: "Zwanan", url: "https://cyyvps.top/about" },
+			{ name: "Zwanan-github", url: "https://github.com/cwy0916" }
 		],
 		openGraph: {
 			title: `Blogs-${blog.name}`,
