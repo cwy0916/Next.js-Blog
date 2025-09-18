@@ -120,7 +120,7 @@ export default async function Page({ params }: { params: Params }) {
 			<div className="mt-12 pt-8 border-t border-border">
 				<h2 className="text-xl font-bold mb-6">相关文章推荐</h2>
 				<div className="grid gap-6 md:grid-cols-1 lg:grid-cols-2">
-					{randomBlogs.map((relatedBlog, index) => (
+					{randomBlogs.map((relatedBlog) => (
 						<Card 
 							key={relatedBlog.name} 
 							className="overflow-hidden border border-border hover:border-primary/50 dark:hover:border-primary/30 transition-all duration-300 hover:shadow-md dark:hover:shadow-primary/10 group"
@@ -175,7 +175,8 @@ export default async function Page({ params }: { params: Params }) {
 }
 
 // 从博客列表中随机选择指定数量的博客
-function getRandomBlogs(blogs: any[], count: number): any[] {
+import { Blog } from '@/actions/blog/action';
+function getRandomBlogs(blogs: Blog[], count: number): Blog[] {
 	if (blogs.length <= count) {
 		return blogs;
 	}

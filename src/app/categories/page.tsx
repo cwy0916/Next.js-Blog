@@ -10,13 +10,13 @@ export const metadata: Metadata = {
 };
 
 interface CategoryPageProps {
-  searchParams?: {
+  searchParams?: Promise<{
     category?: string;
-  };
+  }>;
 }
 
 export default async function CategoriesPage({ searchParams }: CategoryPageProps) {
-  // 在Next.js 15中，需要先await searchParams
+  // 获取解析后的searchParams
   const params = await searchParams;
   const selectedCategory = params?.category;
   const categoriesWithBlogs = await getCategoriesWithBlogs();
@@ -41,7 +41,7 @@ export default async function CategoriesPage({ searchParams }: CategoryPageProps
         
         {categoryData?.blogs.length ? (
           <div className="grid gap-6 md:grid-cols-1 lg:grid-cols-2">
-            {categoryData.blogs.map((blog, index) => (
+            {categoryData.blogs.map((blog) => (
               <Card 
                 key={blog.name} 
                 className="overflow-hidden border border-border hover:border-primary/50 dark:hover:border-primary/30 transition-all duration-300 hover:shadow-md dark:hover:shadow-primary/10 group"
@@ -113,7 +113,7 @@ export default async function CategoriesPage({ searchParams }: CategoryPageProps
       
       {categoriesWithBlogs.length ? (
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {categoriesWithBlogs.map((categoryData, index) => (
+          {categoriesWithBlogs.map((categoryData) => (
             <Card 
               key={categoryData.category} 
               className="overflow-hidden border border-border hover:border-primary/50 dark:hover:border-primary/30 transition-all duration-300 hover:shadow-md dark:hover:shadow-primary/10 group"
