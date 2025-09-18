@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Header } from "@/components/header";
@@ -10,11 +10,6 @@ const SpeedInsights = process.env.NEXT_DEPLOY_VERCEL === "true"
 import Background from "@/components/background";
 import { ToTopButton } from "@/components/to-top-button";
 
-
-const geistSans = Geist({
-    variable: "--font-geist-sans",
-    subsets: ["latin"],
-});
 
 const geistMono = Geist_Mono({
     variable: "--font-geist-mono",
@@ -55,7 +50,7 @@ export default function RootLayout({
                 content="#ffffff"
             />
             <body
-                className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+                className={`${geistMono.variable} antialiased`}
             >
                 <ThemeProvider
                     attribute="class"
