@@ -9,7 +9,6 @@ const SpeedInsights = process.env.NEXT_DEPLOY_VERCEL === "true"
     : () => null;
 import Background from "@/components/background";
 import { ToTopButton } from "@/components/to-top-button";
-import ClickEffect from "@/components/click-effect";
 
 
 const geistSans = Geist({
@@ -77,7 +76,6 @@ export default function RootLayout({
                     </div>
                     <ToTopButton />
                     <Background />
-                    <ClickEffect />
                 </ThemeProvider>
                 <SpeedInsights />
             </body>
