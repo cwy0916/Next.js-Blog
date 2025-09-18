@@ -7,7 +7,6 @@
 - ✨ 响应式博客页面，支持桌面端和移动端
 - 📝 Markdown文章支持，包括代码高亮、图片展示等
 - 🌓 深色/浅色主题切换，自动跟随系统设置
-- 💬 AI聊天功能，支持流式响应
 - 🏎️ 性能优化，包括组件懒加载、图片优化和数据缓存
 - 🎨 优雅的UI设计，基于Tailwind CSS和自定义组件
 - 📊 博客文章列表，支持骨架屏加载状态
@@ -17,7 +16,6 @@
 - **前端框架**: Next.js 14 (App Router)
 - **样式系统**: Tailwind CSS + shadcn/ui
 - **Markdown解析**: React-Markdown
-- **AI集成**: @google/genai
 - **构建工具**: TypeScript
 - **代码高亮**: rehype-highlight
 
