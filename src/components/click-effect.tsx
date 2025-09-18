@@ -29,24 +29,24 @@ export default function ClickEffect() {
       a_idx = (a_idx + 1) % a.length;
       heart.style.cssText = "position: fixed;left:-100%;pointer-events: none;";
 
-      const f = 16, // 字体大小
-            x = event.clientX - f / 2, // 横坐标
-            y = event.clientY - f, // 纵坐标
-            c = randomColor(), // 随机颜色
-            a = 1, // 透明度
-            s = 1.2; // 放大缩小
+      const f = 16; // 字体大小
+      let x = event.clientX - f / 2; // 横坐标
+      let y = event.clientY - f; // 纵坐标
+      const c = randomColor(); // 随机颜色
+      let opacity = 1; // 透明度（使用let声明以便在闭包中修改）
+      let s = 1.2; // 放大缩小
 
-      const timer = setInterval(function () {
-        if (heart.style.opacity && parseFloat(heart.style.opacity) <= 0) {
+      const timer = setInterval(() => {
+        if (opacity <= 0) {
           document.body.removeChild(heart);
           clearInterval(timer);
         } else {
           heart.style.cssText = "font-size:16px;cursor: default;position: fixed;color:" +
-              c + ";left:" + x + "px;top:" + y + "px;opacity:" + a + ";transform:scale(" +
+              c + ";left:" + x + "px;top:" + y + "px;opacity:" + opacity + ";transform:scale(" +
               s + ");pointer-events: none;z-index: 9999;";
 
           y--;
-          a -= 0.016;
+          opacity -= 0.016;
           s += 0.002;
         }
       }, 15);
