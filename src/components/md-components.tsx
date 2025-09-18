@@ -27,12 +27,21 @@ export default function MDComponents(params: Params) {
     const style = {
         // 设置透明
         background: ` ${params.transparent && 'transparent'}`,
-        backgroundColor: params.transparent ? 'transparent' : (resolvedTheme == "dark" ? "#0a0a0a" : "#ffffff")
+        backgroundColor: params.transparent ? 'transparent' : (resolvedTheme == "dark" ? "#0a0a0a" : "#ffffff"),
+        // 确保使用自定义字体
+        fontFamily: 'HaiPaiFont, sans-serif'
     }
 
     return (
         mount ? <>
-            <MdPreview id={"md-preview"} className={cn("markdown-body", "w-full", params.className)} style={style} theme={resolvedTheme == "dark" ? "dark" : "light"} value={params.content ?? ""} previewTheme="default" />
+            <MdPreview 
+                id={"md-preview"} 
+                className={cn("markdown-body", "w-full", params.className, "font-sans")} 
+                style={style} 
+                theme={resolvedTheme == "dark" ? "dark" : "light"} 
+                value={params.content ?? ""} 
+                previewTheme="default" 
+            />
             {!params.hideCatalog && <MenuButton/>}
         </> : <MDSkeleton />
     )

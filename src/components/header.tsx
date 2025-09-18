@@ -10,7 +10,6 @@ export function Header() {
         <div className="p-4 max-w-screen-lg md:w-4/6 w-full sm:w-6/7 mx-auto flex justify-between">
             <NavigationMenu>
                 <NavigationMenuList className="gap-4 flex items-center">
-                <NavigationMenuList className="gap-4 flex items-center">
                     {whiteList.map(item =>
                         <NavigationMenuItem key={item.name}>
                             <NavigationMenuLink asChild>
@@ -20,7 +19,6 @@ export function Header() {
                             </NavigationMenuLink>
                         </NavigationMenuItem>
                     )}
-                </NavigationMenuList>
                 </NavigationMenuList>
             </NavigationMenu>
             <ThemeModeToggle className="ml-auto" />

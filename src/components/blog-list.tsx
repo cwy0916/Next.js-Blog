@@ -36,6 +36,49 @@ export async function BlogList() {
                                     <p className="text-xs text-muted-foreground mt-3 font-mono">
                                         {blog.date}
                                     </p>
+                                    
+                                    {/* 分类和标签区域 */}
+                                    <div className="mt-3 space-y-2">
+                                        {/* 显示分类 */}
+                                        {blog.categories && blog.categories.length > 0 && (
+                                            <div className="flex flex-wrap items-center gap-2">
+                                                <span className="text-xs text-muted-foreground">分类:</span>
+                                                {blog.categories.slice(0, 2).map((category, idx) => (
+                                                    <Badge 
+                                                        key={idx} 
+                                                        className="bg-primary/10 text-primary px-2 py-0.5 transition-all duration-300 hover:bg-primary/20 hover:shadow-sm hover:-translate-y-0.5"
+                                                    >
+                                                        {category}
+                                                    </Badge>
+                                                ))}
+                                                {blog.categories.length > 2 && (
+                                                    <Badge className="bg-primary/10 text-primary px-2 py-0.5 transition-all duration-300 hover:bg-primary/20">
+                                                        +{blog.categories.length - 2}
+                                                    </Badge>
+                                                )}
+                                            </div>
+                                        )}
+                                        
+                                        {/* 显示标签 */}
+                                        {blog.tags && blog.tags.length > 0 && (
+                                            <div className="flex flex-wrap items-center gap-2">
+                                                <span className="text-xs text-muted-foreground">标签:</span>
+                                                {blog.tags.slice(0, 3).map((tag, idx) => (
+                                                    <Badge 
+                                                        key={idx} 
+                                                        className="bg-primary/10 text-primary px-2 py-0.5 transition-all duration-300 hover:bg-primary/20 hover:shadow-sm hover:-translate-y-0.5"
+                                                    >
+                                                        {tag}
+                                                    </Badge>
+                                                ))}
+                                                {blog.tags.length > 3 && (
+                                                    <Badge className="bg-primary/10 text-primary px-2 py-0.5 transition-all duration-300 hover:bg-primary/20">
+                                                        +{blog.tags.length - 3}
+                                                    </Badge>
+                                                )}
+                                            </div>
+                                        )}
+                                    </div>
                                 </Link>
                             </CardContent>
                         </Card>

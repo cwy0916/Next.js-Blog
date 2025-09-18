@@ -5,6 +5,10 @@ export const whiteList = [
         title: "首页"
     },
     {
+        name: "categories",
+        title: "分类"
+    },
+    {
         name: "about",
         title: "关于"
     },

@@ -8,8 +8,34 @@ export interface Blog {
     name: string;
     date: string;
     content: string;
+    categories?: string[];
+    tags?: string[];
 }
 
+
+// 从文章内容中提取分类信息
+function extractCategoriesFromContent(content: string): string[] {
+    const categoriesMatch = content.match(/categories:\s*\[([^\]]+)\]/i);
+    if (categoriesMatch && categoriesMatch[1]) {
+        return categoriesMatch[1]
+            .split(',')
+            .map(cat => cat.trim())
+            .filter(cat => cat.length > 0);
+    }
+    return [];
+}
+
+// 从文章内容中提取标签信息
+function extractTagsFromContent(content: string): string[] {
+    const tagsMatch = content.match(/tags:\s*\[([^\]]+)\]/i);
+    if (tagsMatch && tagsMatch[1]) {
+        return tagsMatch[1]
+            .split(',')
+            .map(tag => tag.trim())
+            .filter(tag => tag.length > 0);
+    }
+    return [];
+}
 
 export async function getBlogList(): Promise<Blog[]> {
     try {
@@ -24,10 +50,18 @@ export async function getBlogList(): Promise<Blog[]> {
             const date = matches[2]!;
             // 把date转换为yyyy-mm-dd
             const dateTime = new Date(date).toISOString().split("T")[0];
+            
+            // 读取文件内容以提取分类和标签
+            const content = await fs.readFile(path.join(process.cwd(), "/content/mds", md), "utf-8");
+            const categories = extractCategoriesFromContent(content);
+            const tags = extractTagsFromContent(content);
+            
             return {
                 name,
                 date: dateTime,
-                content: ""
+                content: "",
+                categories,
+                tags
             }
         }));
         // 按日期降序排序，去除whiteList中为前缀的内容
@@ -54,13 +88,61 @@ export async function getBlog(name: string): Promise<Blog | null> {
         const date = matches[2]!;
         // 把date转换为yyyy-mm-dd
         const dateTime = new Date(date).toISOString().split("T")[0];
+        
+        // 解析Front Matter中的分类和标签
+        const categories = extractCategoriesFromContent(content);
+        const tags = extractTagsFromContent(content);
+        
+        // 从内容中移除分类和标签的文本行
+        let cleanedContent = content;
+        cleanedContent = cleanedContent.replace(/categories:\s*\[[^\]]+\]/i, '');
+        cleanedContent = cleanedContent.replace(/tags:\s*\[[^\]]+\]/i, '');
+        
         return {
             name: title,
             date: dateTime,
-            content
+            content: cleanedContent,
+            categories,
+            tags
         }
     } catch (error) {
         console.error(error);
         return null;
+    }
+}
+
+// 获取所有分类及其文章
+interface CategoryWithBlogs {
+    category: string;
+    blogs: Blog[];
+}
+
+export async function getCategoriesWithBlogs(): Promise<CategoryWithBlogs[]> {
+    try {
+        const blogList = await getBlogList();
+        
+        // 按分类对文章进行分组
+        const categoryMap = new Map<string, Blog[]>();
+        
+        blogList.forEach(blog => {
+            if (blog.categories && blog.categories.length > 0) {
+                blog.categories.forEach(category => {
+                    if (!categoryMap.has(category)) {
+                        categoryMap.set(category, []);
+                    }
+                    categoryMap.get(category)!.push(blog);
+                });
+            }
+        });
+        
+        // 转换为数组并按文章数量排序（从多到少）
+        const categoriesWithBlogs: CategoryWithBlogs[] = Array.from(categoryMap.entries())
+            .map(([category, blogs]) => ({ category, blogs }))
+            .sort((a, b) => b.blogs.length - a.blogs.length);
+        
+        return categoriesWithBlogs;
+    } catch (error) {
+        console.error(error);
+        return [];
     }
 }
