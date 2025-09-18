@@ -11,6 +11,13 @@ export interface Blog {
 }
 
 
+export interface Blog {    
+    name: string;
+    date: string;
+    content: string;
+    excerpt: string;
+}
+
 export async function getBlogList(): Promise<Blog[]> {
     try {
         // 获取mds文件夹下的所有文件
@@ -24,10 +31,29 @@ export async function getBlogList(): Promise<Blog[]> {
             const date = matches[2]!;
             // 把date转换为yyyy-mm-dd
             const dateTime = new Date(date).toISOString().split("T")[0];
+            
+            // 读取文件内容以提取摘要
+            const filePath = path.join(process.cwd(), "/content/mds", md);
+            const content = await fs.readFile(filePath, "utf-8");
+            
+            // 提取摘要（去掉标题和代码块，取前150个字符）
+            let excerpt = content
+                .replace(/#.*$/gm, '') // 移除标题
+                .replace(/```[\s\S]*?```/gm, '') // 移除代码块
+                .replace(/\n+/g, ' ') // 换行替换为空格
+                .replace(/\s+/g, ' ') // 多个空格替换为单个空格
+                .trim();
+            
+            // 截取前150个字符作为摘要
+            if (excerpt.length > 150) {
+                excerpt = excerpt.substring(0, 150) + '...';
+            }
+            
             return {
                 name,
                 date: dateTime,
-                content: ""
+                content: "", // 保持原有结构，不返回完整内容
+                excerpt
             }
         }));
         // 按日期降序排序，去除whiteList中为前缀的内容
