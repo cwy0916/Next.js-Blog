@@ -2,30 +2,46 @@
 
 import fs from "fs/promises";
 import path from "path";
+import { readFromBlob, writeToBlob } from '@/lib/vercel-blob';
 
 interface ReadStatsData {
   stats: Record<string, number>;
 }
 
+// 是否在 Vercel 环境中
+const isVercel = process.env.NEXT_DEPLOY_VERCEL === 'true';
+
 // 读取阅读量统计数据
 async function readStats(): Promise<ReadStatsData> {
-  try {
-    const statsPath = path.join(process.cwd(), "src/data/read-stats.json");
-    const data = await fs.readFile(statsPath, "utf-8");
-    return JSON.parse(data) as ReadStatsData;
-  } catch (error) {
-    console.error("读取阅读量数据失败:", error);
-    return { stats: {} };
+  if (isVercel) {
+    // 在 Vercel 环境中使用 Blob 存储
+    return await readFromBlob<ReadStatsData>('read-stats.json', { stats: {} });
+  } else {
+    // 在本地环境中使用文件系统
+    try {
+      const statsPath = path.join(process.cwd(), "src/data/read-stats.json");
+      const data = await fs.readFile(statsPath, "utf-8");
+      return JSON.parse(data) as ReadStatsData;
+    } catch (error) {
+      console.error("读取阅读量数据失败:", error);
+      return { stats: {} };
+    }
   }
 }
 
 // 保存阅读量统计数据
 async function saveStats(stats: ReadStatsData): Promise<void> {
-  try {
-    const statsPath = path.join(process.cwd(), "src/data/read-stats.json");
-    await fs.writeFile(statsPath, JSON.stringify(stats, null, 2), "utf-8");
-  } catch (error) {
-    console.error("保存阅读量数据失败:", error);
+  if (isVercel) {
+    // 在 Vercel 环境中使用 Blob 存储
+    await writeToBlob('read-stats.json', stats);
+  } else {
+    // 在本地环境中使用文件系统
+    try {
+      const statsPath = path.join(process.cwd(), "src/data/read-stats.json");
+      await fs.writeFile(statsPath, JSON.stringify(stats, null, 2), "utf-8");
+    } catch (error) {
+      console.error("保存阅读量数据失败:", error);
+    }
   }
 }
 

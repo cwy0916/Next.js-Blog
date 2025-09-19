@@ -2,9 +2,10 @@
 
 import fs from "fs/promises";
 import path from "path";
+import { readFromBlob, writeToBlob } from '@/lib/vercel-blob';
 
 // 定义评论数据结构
-interface Comment {
+export interface Comment {
   id: string;
   blogName: string;
   nickname: string;
@@ -18,6 +19,9 @@ interface CommentsData {
   comments: Comment[];
 }
 
+// 是否在 Vercel 环境中
+const isVercel = process.env.NEXT_DEPLOY_VERCEL === 'true';
+
 // 获取评论数据文件的路径
 const getCommentsFilePath = (): string => {
   return path.join(process.cwd(), '/src/data/comments.json');
@@ -25,24 +29,39 @@ const getCommentsFilePath = (): string => {
 
 // 读取评论数据
 const readComments = async (): Promise<CommentsData> => {
-  try {
-    const filePath = getCommentsFilePath();
-    const data = await fs.readFile(filePath, 'utf-8');
-    return JSON.parse(data);
-  } catch {
-    // 如果文件不存在或读取失败，返回空的评论列表
-    return { comments: [] };
+  if (isVercel) {
+    // 在 Vercel 环境中使用 Blob 存储
+    return await readFromBlob<CommentsData>('comments.json', { comments: [] });
+  } else {
+    // 在本地环境中使用文件系统
+    try {
+      const filePath = getCommentsFilePath();
+      const data = await fs.readFile(filePath, 'utf-8');
+      return JSON.parse(data);
+    } catch {
+      // 如果文件不存在或读取失败，返回空的评论列表
+      return { comments: [] };
+    }
   }
 };
 
 // 保存评论数据
 const saveComments = async (data: CommentsData): Promise<void> => {
-  try {
-    const filePath = getCommentsFilePath();
-    await fs.writeFile(filePath, JSON.stringify(data, null, 2), 'utf-8');
-  } catch (error) {
-    console.error('保存评论数据失败:', error);
-    throw new Error('保存评论失败');
+  if (isVercel) {
+    // 在 Vercel 环境中使用 Blob 存储
+    const success = await writeToBlob('comments.json', data);
+    if (!success) {
+      throw new Error('保存评论失败');
+    }
+  } else {
+    // 在本地环境中使用文件系统
+    try {
+      const filePath = getCommentsFilePath();
+      await fs.writeFile(filePath, JSON.stringify(data, null, 2), 'utf-8');
+    } catch (error) {
+      console.error('保存评论数据失败:', error);
+      throw new Error('保存评论失败');
+    }
   }
 };
 

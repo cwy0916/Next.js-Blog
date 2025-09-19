@@ -288,7 +288,7 @@ const CommentSection: React.FC<CommentSectionProps> = ({ blogName }) => {
     } finally {
       setLoading(false);
     }
-  }, [blogName, getCommentsByBlogName]);
+  }, [blogName]);
 
   // 提交评论
   const handleSubmit = async (e: React.FormEvent) => {

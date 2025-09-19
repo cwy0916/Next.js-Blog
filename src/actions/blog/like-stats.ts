@@ -2,30 +2,46 @@
 
 import fs from "fs/promises";
 import path from "path";
+import { readFromBlob, writeToBlob } from '@/lib/vercel-blob';
 
 interface LikeStatsData {
   stats: Record<string, number>;
 }
 
+// 是否在 Vercel 环境中
+const isVercel = process.env.NEXT_DEPLOY_VERCEL === 'true';
+
 // 读取点赞统计数据
 async function readStats(): Promise<LikeStatsData> {
-  try {
-    const statsPath = path.join(process.cwd(), "src/data/like-stats.json");
-    const data = await fs.readFile(statsPath, "utf-8");
-    return JSON.parse(data) as LikeStatsData;
-  } catch (error) {
-    console.error("读取点赞数据失败:", error);
-    return { stats: {} };
+  if (isVercel) {
+    // 在 Vercel 环境中使用 Blob 存储
+    return await readFromBlob<LikeStatsData>('like-stats.json', { stats: {} });
+  } else {
+    // 在本地环境中使用文件系统
+    try {
+      const statsPath = path.join(process.cwd(), "src/data/like-stats.json");
+      const data = await fs.readFile(statsPath, "utf-8");
+      return JSON.parse(data) as LikeStatsData;
+    } catch (error) {
+      console.error("读取点赞数据失败:", error);
+      return { stats: {} };
+    }
   }
 }
 
 // 保存点赞统计数据
 async function saveStats(stats: LikeStatsData): Promise<void> {
-  try {
-    const statsPath = path.join(process.cwd(), "src/data/like-stats.json");
-    await fs.writeFile(statsPath, JSON.stringify(stats, null, 2), "utf-8");
-  } catch (error) {
-    console.error("保存点赞数据失败:", error);
+  if (isVercel) {
+    // 在 Vercel 环境中使用 Blob 存储
+    await writeToBlob('like-stats.json', stats);
+  } else {
+    // 在本地环境中使用文件系统
+    try {
+      const statsPath = path.join(process.cwd(), "src/data/like-stats.json");
+      await fs.writeFile(statsPath, JSON.stringify(stats, null, 2), "utf-8");
+    } catch (error) {
+      console.error("保存点赞数据失败:", error);
+    }
   }
 }
 
