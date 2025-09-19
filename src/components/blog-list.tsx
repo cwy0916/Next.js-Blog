@@ -1,4 +1,6 @@
 import { getBlogList } from "@/actions/blog/action";
+import { getReadCount } from "@/actions/blog/read-stats";
+import { getLikeCount } from "@/actions/blog/like-stats";
 import { Skeleton } from "@/components/ui/skeleton";
 import { TransitionItem } from "./transition/blog-item-transition/transition";
 import Link from "next/link";
@@ -6,6 +8,16 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 export async function BlogList() {
     const blogList = await getBlogList();
+    
+    // 获取每篇文章的阅读量和点赞数
+    const blogsWithStats = await Promise.all(
+        blogList.map(async (blog) => ({
+            ...blog,
+            readCount: await getReadCount(blog.name),
+            likeCount: await getLikeCount(blog.name)
+        }))
+    );
+    
     return (
         <div className="flex flex-col gap-8 px-4 sm:px-0">
             <div className="flex items-center justify-between">
@@ -20,7 +32,7 @@ export async function BlogList() {
                 </Badge>
             </div>
             <div className="grid gap-6 md:grid-cols-1 lg:grid-cols-2">
-                {blogList.map((blog, index) => (
+                {blogsWithStats.map((blog, index) => (
                     <TransitionItem index={index} key={blog.name}>
                         <Card className="overflow-hidden border border-border hover:border-primary/50 dark:hover:border-primary/30 transition-all duration-300 hover:shadow-md dark:hover:shadow-primary/10 group">
                             <CardContent className="p-0">
@@ -29,9 +41,16 @@ export async function BlogList() {
                                         <h2 className="text-lg font-medium line-clamp-2 group-hover:text-primary transition-colors duration-200">
                                             {blog.name}
                                         </h2>
-                                        <span className="ml-2 text-xs font-medium text-primary/80 bg-primary/10 px-2 py-0.5 rounded-full">
-                                            阅读
-                                        </span>
+                                        {blog.name !== 'about' && blog.name !== 'friend-links' && blog.name !== 'todo' && (
+                                            <div className="flex items-center gap-1">
+                                                <span className="text-xs font-medium text-primary/80 bg-primary/10 px-2 py-0.5 rounded-full">
+                                                    {blog.readCount || 0} 阅读
+                                                </span>
+                                                <span className="text-xs font-medium text-pink-500/80 bg-pink-500/10 px-2 py-0.5 rounded-full">
+                                                    {blog.likeCount || 0} 点赞
+                                                </span>
+                                            </div>
+                                        )}
                                     </div>
                                     <p className="text-xs text-muted-foreground mt-3 font-mono">
                                         {blog.date}

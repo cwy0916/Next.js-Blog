@@ -1,10 +1,14 @@
 import { getBlog, getBlogList } from "@/actions/blog/action";
+import { incrementReadCount, getReadCount } from "@/actions/blog/read-stats";
+import { getLikeCount } from "@/actions/blog/like-stats";
 import { notFound } from "next/navigation";
 import { whiteList } from "@/app/white-list";
 import { Metadata } from "next";
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
 import { Card, CardContent } from "@/components/ui/card";
+import LikeButton from "@/components/like-button";
+import CommentSection from "@/components/comment-section";
 
 // 动态导入MD组件
 const MDComponents = (await import("@/components/md-components")).default;
@@ -62,6 +66,19 @@ export default async function Page({ params }: { params: Params }) {
 		throw notFound();
 	}
 
+	// 检查是否是特殊页面（关于、友链、目标）
+	const isSpecialPage = decodedName === 'about' || decodedName === 'friend-links' || decodedName === 'todo';
+
+	// 只对非特殊页面增加阅读量
+	if (!isSpecialPage) {
+		await incrementReadCount(decodedName);
+	}
+
+	// 获取当前阅读量
+	const readCount = await getReadCount(decodedName);
+	// 获取当前点赞数
+	const likeCount = await getLikeCount(decodedName);
+
 	// 获取所有文章并过滤掉当前文章
 	const allBlogs = await getBlogList();
 	const otherBlogs = allBlogs.filter(item => item.name !== decodedName);
@@ -77,8 +94,17 @@ export default async function Page({ params }: { params: Params }) {
 		<div className="flex flex-col gap-4">
 			<h1 className="text-3xl font-bold">
 				{displayTitle}
-			</h1>
-			<p className="text-sm text-gray-500">{`更新时间：${blog.date}`}</p>
+		</h1>
+		<p className="text-sm text-gray-500 flex items-center gap-4">
+			{isSpecialPage ? `更新时间：${blog.date}` : (
+				<>
+					更新时间：{blog.date} | 阅读: {readCount} 次
+					<span className="ml-2 inline-flex items-center">
+						<LikeButton blogName={decodedName} initialCount={likeCount} />
+					</span>
+				</>
+			)}
+		</p>
 			
 			{/* 分类和标签区域 */}
 			<div className="flex flex-col gap-3 pt-2">
@@ -132,13 +158,13 @@ export default async function Page({ params }: { params: Params }) {
 											{relatedBlog.name}
 										</h3>
 										<span className="ml-2 text-xs font-medium text-primary/80 bg-primary/10 px-2 py-0.5 rounded-full">
-											阅读
-										</span>
+							阅读
+						</span>
 									</div>
 									<p className="text-xs text-muted-foreground mt-3 font-mono">
 										{relatedBlog.date}
 									</p>
-										
+									
 									{/* 分类和标签区域 */}
 									<div className="mt-3 space-y-2">
 										{relatedBlog.categories && relatedBlog.categories.length > 0 && (
@@ -169,6 +195,11 @@ export default async function Page({ params }: { params: Params }) {
 					))}
 				</div>
 			</div>
+		)}
+
+		{/* 评论区 - 不在 about、friend-links 和 todo 页面显示 */}
+		{decodedName !== 'about' && decodedName !== 'friend-links' && decodedName !== 'todo' && (
+			<CommentSection blogName={decodedName} />
 		)}
 	</div>
 );
